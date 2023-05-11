@@ -1,52 +1,54 @@
 package Task31._Boot.service;
 
-import Task31._Boot.dao.UserDao;
-import Task31._Boot.dao.UserDaoImpl;
 import Task31._Boot.models.User;
+import Task31._Boot.repositiries.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
 public class UserServiceImpl implements UserService{
 
-    private final UserDao userDao;
+    private final UserRepository userRepository;
 
-    public UserServiceImpl(UserDaoImpl userDao) {
-        this.userDao = userDao;
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
 
     @Override
     @Transactional
     public void save(User user) {
-    userDao.save(user);
+        userRepository.save(user);
     }
 
 
     @Override
     @Transactional
     public void removeUserById(long id) {
-    userDao.removeUserById(id);
+    userRepository.deleteById(id);
     }
 
     @Override
     public List<User> getAllUsers() {
-        return userDao.getAllUsers();
+        return userRepository.findAll();
     }
 
     @Override
     public User getUserById(long id) {
-        return userDao.getUserById(id);
+        Optional<User> foundUser = userRepository.findById(id);
+        return foundUser.orElse(null);
     }
-
 
     @Override
     @Transactional
-    public void update( User user) {
-    userDao.update(user);
+    public void update(User user) {
+        userRepository.save(user);
     }
 }
